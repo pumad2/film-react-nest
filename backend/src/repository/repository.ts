@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Film, FilmDocument } from '../films/schemas/film.schema';
@@ -20,10 +16,6 @@ export class Repository {
 
   async findById(id: string): Promise<FilmDocument> {
     const film = await this.filmModel.findOne({ id }).exec();
-    if (!film) {
-      throw new NotFoundException('Фильм не найден');
-    }
-
     return film;
   }
 
@@ -31,19 +23,17 @@ export class Repository {
     filmId: string,
     scheduleId: string,
     reservedSeats: Array<{ row: number; seat: number }>,
-  ): Promise<void> {
+  ): Promise<'FILM_NOT_FOUND' | 'SCHEDULE_NOT_FOUND' | 'SEAT_TAKEN' | null> {
     const film = await this.findById(filmId);
+    if (!film) return 'FILM_NOT_FOUND';
+
     const scheduleItem = film.schedule.find((item) => item.id === scheduleId);
-    if (!scheduleItem) {
-      throw new NotFoundException('Сеанс не найден');
-    }
+    if (!scheduleItem) return 'SCHEDULE_NOT_FOUND';
 
     const seatKeys = reservedSeats.map((item) => `${item.row}:${item.seat}`);
 
     for (const seatKey of seatKeys) {
-      if (scheduleItem.taken.includes(seatKey)) {
-        throw new BadRequestException(`Место ${seatKey} уже занято`);
-      }
+      if (scheduleItem.taken.includes(seatKey)) return 'SEAT_TAKEN';
     }
 
     scheduleItem.taken.push(...seatKeys);
