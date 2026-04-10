@@ -45,13 +45,11 @@ export class Repository {
 
     const seatKeys = reservedSeats.map((item) => `${item.row}:${item.seat}`);
 
-    const takenSeats = scheduleItem.taken ? scheduleItem.taken.split(',') : [];
-
     for (const seatKey of seatKeys) {
-      if (takenSeats.includes(seatKey)) return 'SEAT_TAKEN';
+      if (scheduleItem.taken.includes(seatKey)) return 'SEAT_TAKEN';
     }
 
-    scheduleItem.taken = [...takenSeats, ...seatKeys].join(',');
+    scheduleItem.taken.push(...seatKeys);
 
     await this.scheduleRepository.save(scheduleItem);
 

@@ -14,13 +14,13 @@ import { Schedule } from './films/entities/schedule.entity';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      envFilePath: '.env.example',
+      envFilePath: '.env',
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
-        type: 'postgres',
+        type: config.get<'postgres'>('DATABASE_DRIVER'),
         host: config.get<string>('DATABASE_HOST'),
         port: Number(config.get('DATABASE_PORT')),
         username: config.get<string>('DATABASE_USERNAME'),

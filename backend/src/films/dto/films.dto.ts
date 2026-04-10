@@ -5,14 +5,14 @@ export class ScheduleDto {
   rows: number;
   seats: number;
   price: number;
-  taken: string;
+  taken: string[];
 }
 
 export class FilmDto {
   id: string;
   rating: number;
   director: string;
-  tags: string;
+  tags: string[];
   image: string;
   cover: string;
   title: string;
