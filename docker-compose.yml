@@ -1,0 +1,65 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+    image: ghcr.io/pumad2/film-react-nest-frontend:latest
+    volumes:
+      - frontend_dist:/frontend-dist
+
+  backend:
+    build:
+      context: ./backend
+    image: ghcr.io/pumad2/film-react-nest-backend:latest
+    restart: unless-stopped
+    environment:
+      DATABASE_DRIVER: ${DATABASE_DRIVER}
+      DATABASE_HOST: postgres
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+    depends_on:
+      - postgres
+    expose:
+      - "3000"
+
+  nginx:
+    build:
+      context: ./nginx
+    image: ghcr.io/pumad2/film-react-nest-nginx:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - frontend_dist:/usr/share/nginx/html
+    depends_on:
+      - frontend
+      - backend
+
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+
+volumes:
+  frontend_dist:
+  postgres_data:
+  pgadmin_data:
