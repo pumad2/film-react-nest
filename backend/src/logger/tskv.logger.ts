@@ -24,15 +24,15 @@ export class TskvLogger implements LoggerService {
     );
   }
 
-  log(message: any, ...optionalParams: any[]): void {
+  log(message: unknown, ...optionalParams: unknown[]): void {
     process.stdout.write(this.formatMessage('log', message, ...optionalParams));
   }
-  error(message: any, ...optionalParams: any[]): void {
+  error(message: unknown, ...optionalParams: unknown[]): void {
     process.stdout.write(
       this.formatMessage('error', message, ...optionalParams),
     );
   }
-  warn(message: any, ...optionalParams: any[]): void {
+  warn(message: unknown, ...optionalParams: unknown[]): void {
     process.stdout.write(
       this.formatMessage('warn', message, ...optionalParams),
     );
