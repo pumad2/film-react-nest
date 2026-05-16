@@ -5,6 +5,7 @@ services:
     image: ghcr.io/pumad2/film-react-nest-frontend:latest
     volumes:
       - frontend_dist:/frontend-dist
+    restart: on-failure
 
   backend:
     build:
