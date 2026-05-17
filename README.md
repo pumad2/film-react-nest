@@ -1,5 +1,11 @@
 # FILM!
 
+## Деплой
+
+Проект доступен по адресу:
+
+http://api.nestfilm.nomorepartiessite.ru
+
 ## Установка
 
 ### MongoDB
